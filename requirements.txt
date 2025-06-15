@@ -1,0 +1,20 @@
+# URL Shortener - Node.js Dependencies
+
+# Core Framework
+express@^4.18.0
+
+# Database
+mongoose@^7.0.0
+
+# Template Engine
+ejs@^3.1.0
+
+# Utility Libraries
+shortid@^2.2.16
+uuid@^9.0.0
+
+# Middleware
+cookie-parser@^1.4.6
+
+# Development Dependencies (optional)
+nodemon@^2.0.0
