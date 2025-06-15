@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+        }
+
+        .short-url {
+            font-weight: bold;
+            color: #155724;
+        }
+
+        .url-table {
+            margin-top: 30px;
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .url-table th,
+        .url-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .url-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .url-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .url-link {
+            color: #007bff;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .url-link:hover {
+            text-decoration: underline;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .error {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>URL Shortener</h1>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <% if (typeof user !=='undefined' && user) { %>
+                <p>Welcome, <%= user.username %>!</p>
+                <a href="/logout" style="margin-left: 15px;">Logout</a>
+                <% } else { %>
+                    <a href="/signup" style="margin-right: 15px;">Sign Up</a>
+                    <a href="/login">Login</a>
+                    <% } %>
+        </div>
+
+        <form action="/" method="POST" id="urlForm">
+            <div class="form-group">
+                <label for="originalUrl">Enter URL to shorten:</label>
+                <input type="url" id="originalUrl" name="originalUrl" placeholder="https://example.com" required />
+            </div>
+            <button type="submit">Shorten URL</button>
+        </form>
+
+        <% if (shortUrl) { %>
+            <div class="result">
+                <p>Your shortened URL:</p>
+                <p class="short-url">
+                    <a href="<%= shortUrl %>" target="_blank">
+                        <%= shortUrl %>
+                    </a>
+                </p>
+            </div>
+            <script>
+                document.getElementById("urlForm").reset();
+            </script>
+            <% } %>
+                <% if (typeof message !=='undefined' ) { %>
+                    <div class="result">
+                        <p>
+                            <%= message %>
+                        </p>
+                    </div>
+                    <% } %>
+                        <% if (typeof error !=='undefined' ) { %>
+                            <div class="error">
+                                <p>Failed to generate short URL. Please try again.</p>
+                            </div>
+                            <% } %>
+                                <% if (urls && urls.length> 0) { %>
+                                    <h2>URL Analytics</h2>
+                                    <table class="url-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Short URL</th>
+                                                <th>Original URL</th>
+                                                <th>Clicks</th>
+                                                <th>Created</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% urls.forEach(url=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <a href="<%= url.shortUrl %>" target="_blank" class="url-link">
+                                                            <%= url.shortUrl %>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="<%= url.originalUrl %>" target="_blank"
+                                                            class="url-link">
+                                                            <%= url.originalUrl.length> 50 ?
+                                                                url.originalUrl.substring(0,
+                                                                50) + '...' : url.originalUrl %>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <%= url.clicks %>
+                                                    </td>
+                                                    <td>
+                                                        <%= new Date(url.createdAt).toLocaleDateString() %>
+                                                    </td>
+                                                </tr>
+                                                <% }); %>
+                                        </tbody>
+                                    </table>
+                                    <% } else { %>
+                                        <div class="no-data">
+                                            <h3>No URLs created yet</h3>
+                                            <p>Create your first short URL using the form above!</p>
+                                        </div>
+                                        <% } %>
+    </div>
+</body>
+
+</html>
